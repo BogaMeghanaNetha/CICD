@@ -1,0 +1,33 @@
+o	pipeline {
+o	    agent any
+o	
+o	    stages {
+o	        stage('Clone Repository') {
+o	            steps {
+o	                git branch: 'main', url: https://github.com/BogaMeghanaNetha/CICD.git
+o	            }
+o	        }
+o	
+o	        stage('Build Docker Image') {
+o	            steps {
+o	                sh 'docker build -t sample-web-page .'
+o	            }
+o	        }
+o	
+o	        stage('Deploy Docker Container') {
+o	            steps {
+o	                sh '''
+o	                docker stop sample-web-container || true
+o	                docker rm sample-web-container || true
+o	                docker run -d -p 80:80 --name sample-web-container sample-web-page
+o	                '''
+o	            }
+o	        }
+o	    }
+o	
+o	    post {
+o	        always {
+o	            echo 'Pipeline execution completed.'
+o	        }
+o	    }
+o	}
